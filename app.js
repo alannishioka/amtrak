@@ -18,7 +18,7 @@ app.get("/", (req, res) =>
     let promises = []
 
     // Add now to train array
-    trainArray.push( { stamp: new Date(), name: '\t\t----- NOW -----' } );
+    trainArray.push( { stamp: new Date(), name: '<td></td><td></td><td>----- NOW -----</td>' } );
 
     station.EMY.trains.forEach((train_number) => {
 
@@ -63,7 +63,7 @@ app.get("/", (req, res) =>
         // console.log( 'BUC', mid.toLocaleTimeString());
 
         // console.log( x.trainNum + '\t' + x.routeName + '\t' + mid.toLocaleTimeString());
-        trainArray.push( { stamp: mid, name: x.trainNum + '\t' + x.destCode + '\t' + x.routeName } );
+        trainArray.push( { stamp: mid, name: '<td style="text-align:right">' + x.trainNum + '</td><td>' + x.destCode + '</td><td>' + x.routeName + '</td>' } );
       }));
 
     });
@@ -73,12 +73,18 @@ app.get("/", (req, res) =>
   }).then(() => {
     trainArray.sort((a, b) => a.stamp.getTime() - b.stamp.getTime());
 
+    html += '<table>';
     for( let i = 0; i < trainArray.length; i++ )
     {
       //console.log( trainArray[i].stamp.toLocaleTimeString(), trainArray[i].name );
       console.log( trainArray[i].stamp.toLocaleString() +'\t' + trainArray[i].name );
-      html += trainArray[i].stamp.toLocaleString() +'\t' + trainArray[i].name + '<br>';
+      html += '<tr>';
+      html += '<td style="text-align:right">' + trainArray[i].stamp.toLocaleDateString() +'</td>';
+      html += '<td style="text-align:right">' + trainArray[i].stamp.toLocaleTimeString() +'</td>';
+      html += '<td>' + trainArray[i].name + '</td>';
+      html += '</tr>';
     }
+    html += '</table>';
 
     res.type('html').send(html)
   });

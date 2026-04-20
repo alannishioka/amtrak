@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "amtrak": "^3.0.14",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "serve-favicon": "^2.5.1"
   },
   "repository": "https://github.com/alannishioka/amtrak.git"
 }

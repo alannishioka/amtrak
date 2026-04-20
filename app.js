@@ -1,10 +1,15 @@
 const express = require("express");
 const app = express();
+const favicon = require('serve-favicon');
+const path = require('path');
 const port = process.env.PORT || 3001;
 const { fetchStation } = require("amtrak");
 const { fetchTrain }   = require("amtrak");
 
 const lerp = (start, end, amt) => start + amt * (end - start);
+
+// Serve favicon.ico
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 app.get("/", (req, res) =>
 {

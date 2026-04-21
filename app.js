@@ -33,38 +33,57 @@ app.get("/", (req, res) =>
 
         // if( x.trainNum == 710 ) console.log( x );
 
-        let station = '';
-        let nextStation = '';
         let stations = x.stations;
-        for( let i=0; i < stations.length; i++ )
+        let ratio;
+        let i;
+        for( i=0; i < stations.length; i++ )
         {
-          // Just save MTZ and EMY
-          if(( stations[i].code == 'EMY' ) || ( stations[i].code == 'MTZ' ))
+          // Look for RIC-EMY, RIC-BKY, MTZ-EMY
+          if(( stations[i].code == 'EMY' ) && ( stations[i+1].code == 'MTZ' ))
           {
-            if( station == '' ) station = stations[i];
-            else if( nextStation == '' ) nextStation = stations[i];
+            ratio = 3.7 / 34;
+            break;
+          }
+          else if(( stations[i].code == 'MTZ' ) && ( stations[i+1].code == 'EMY' ))
+          {
+            ratio = 1 - ( 3.7 / 34 );
+            break;
+          }
+          else if(( stations[i].code == 'EMY' ) && ( stations[i+1].code == 'RIC' ))
+          {
+            ratio = 3.7 / 4.6;
+            break;
+          }
+          else if(( stations[i].code == 'RIC' ) && ( stations[i+1].code == 'EMY' ))
+          {
+            ratio = 1 - ( 3.7 / 4.6 );
+            break;
+          }
+          else if(( stations[i].code == 'BKY' ) && ( stations[i+1].code == 'RIC' ))
+          {
+            ratio = 1.4 / 6.4;
+            break;
+          }
+          else if(( stations[i].code == 'RIC' ) && ( stations[i+1].code == 'BKY' ))
+          {
+            ratio = 1 - ( 1.4 / 6.4 );
+            break;
           }
         }
 
-        let dep = Date.parse( station.dep );
-        let arr = Date.parse( nextStation.arr );
+        let dep = Date.parse( stations[i].dep );
+        let arr = Date.parse( stations[i+1].arr );
         let mid;
 
         // If arr/dep null, use schArr/schDep instead
-        if( station.dep     == null ) dep = Date.parse( station.schDep );
-        if( nextStation.arr == null ) arr = Date.parse( station.schArr );
+        if( stations[i].dep   == null ) dep = Date.parse( stations[i].schDep );
+        if( stations[i+1].arr == null ) arr = Date.parse( stations[i+1].schArr );
 
-        if( station.code == 'EMY' )
-        {
-          mid = new Date( lerp( dep, arr, 3.7 / 34 ));
-        }
-        else
-        {
-          mid = new Date( lerp( arr, dep, 3.7 / 34 ));
-        }
+        // Interpolate time
+        mid = new Date( lerp( dep, arr, ratio ));
 
-        // console.log( station.code, station.dep );
-        // console.log( nextStation.code, nextStation.arr );
+        // console.log( stations[i].code,   new Date( dep ).toLocaleTimeString());
+        // console.log( stations[i+1].code, new Date( arr ).toLocaleTimeString());
         // console.log( 'BUC', mid.toLocaleTimeString());
 
         // console.log( x.trainNum + '\t' + x.routeName + '\t' + mid.toLocaleTimeString());

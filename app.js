@@ -98,7 +98,7 @@ app.get("/", (req, res) =>
 
     trainArray.sort((a, b) => a.stamp.getTime() - b.stamp.getTime());
 
-    html += '<table>';
+    html += '<table style="font-size:4.5vw">';
     for( let i = 0; i < trainArray.length; i++ )
     {
       // console.log( trainArray[i].stamp.toLocaleTimeString(), trainArray[i].name );
